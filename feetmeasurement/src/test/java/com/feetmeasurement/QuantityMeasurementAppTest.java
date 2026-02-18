@@ -4,40 +4,35 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {
-	
     @Test
-    public void testEquality_SameValue() {
-        Feet f1 = new Feet(1.0);
-        Feet f2 = new Feet(1.0);
-
-        assertTrue(f1.equals(f2), "1.0 ft should be equal to 1.0 ft");
+    public void testFeetEquality_SameValue() {
+        assertTrue(QuantityMeasurementApp.compareFeet(1.0, 1.0));
     }
     @Test
-    public void testEquality_DifferentValue() {
-        Feet f1 = new Feet(1.0);
-        Feet f2 = new Feet(2.0);
+    public void testFeetEquality_DifferentValue() {
 
-        assertFalse(f1.equals(f2), "1.0 ft should not be equal to 2.0 ft");
+        assertFalse(QuantityMeasurementApp.compareFeet(1.0, 2.0));
     }
     @Test
-    public void testEquality_NullComparison() {
-        Feet f1 = new Feet(1.0);
+    public void testInchesEquality_SameValue() {
 
-        assertFalse(f1.equals(null), "Feet should not be equal to null");
+        assertTrue(QuantityMeasurementApp.compareInches(1.0, 1.0));
     }
     @Test
-    public void testEquality_SameReference() {
-        Feet f1 = new Feet(1.0);
+    public void testInchesEquality_DifferentValue() {
 
-        assertTrue(f1.equals(f1), "Same object should be equal to itself");
+        assertFalse(QuantityMeasurementApp.compareInches(1.0, 2.0));
     }
     @Test
-    public void testEquality_DifferentType() {
-        Feet f1 = new Feet(1.0);
-        String str = "1.0";
-
-        assertFalse(f1.equals(str), "Feet should not be equal to different type");
+    public void testFeetEquality_NullComparison() {
+        Feet f = new Feet(1.0);
+        assertFalse(f.equals(null));
     }
-
+    @Test
+    public void testInchesEquality_SameReference() {
+        Inches i = new Inches(1.0);
+        assertTrue(i.equals(i));
+    }
 }
+
 

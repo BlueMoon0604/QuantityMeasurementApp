@@ -1,17 +1,23 @@
 package com.feetmeasurement;
 
 public class QuantityMeasurementApp {
-    public static void main(String[] args) {
-        Feet f1 = new Feet(1.0);
-        Feet f2 = new Feet(1.0);
-        boolean result = f1.equals(f2);
+    public static boolean compareFeet(double value1, double value2) {
+        Feet f1 = new Feet(value1);
+        Feet f2 = new Feet(value2);
 
-        if(result) {
-            System.out.println("Equal (true)");
-        }else {
- 
-        	System.out.println("Not Equal (false)");
-        }
+        return f1.equals(f2);
     }
-        
+    public static boolean compareInches(double value1, double value2) {
+        Inches i1 = new Inches(value1);
+        Inches i2 = new Inches(value2);
+
+        return i1.equals(i2);
+    }
+    public static void main(String[] args) {
+        boolean feetResult = compareFeet(1.0, 1.0);
+        boolean inchResult = compareInches(1.0, 1.0);
+
+        System.out.println("Feet Equal (" + feetResult + ")");
+        System.out.println("Inches Equal (" + inchResult + ")");
+    }
 }
