@@ -1,14 +1,16 @@
 package com.feetmeasurement;
 
 public enum LengthUnit {
-    FEET(1.0),
-    INCH(1.0 / 12.0);
 
-    private final double toFeetFactor;
-    LengthUnit(double toFeetFactor){
-        this.toFeetFactor = toFeetFactor;
+    INCHES(1.0),
+    FEET(12.0),
+    YARDS(36.0),
+    CENTIMETERS(0.393701);
+    private final double conversionFactorToInches;
+    LengthUnit(double conversionFactorToInches) {
+        this.conversionFactorToInches = conversionFactorToInches;
     }
-    public double toFeet(double value){
-        return value * toFeetFactor;
+    public double toInches(double value) {
+        return value * conversionFactorToInches;
     }
 }
