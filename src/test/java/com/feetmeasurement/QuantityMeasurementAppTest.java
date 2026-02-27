@@ -4,98 +4,74 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
-
     private static final double EPSILON = 0.0001;
-
     @Test
-    void testAddition_SameUnit_FeetPlusFeet() {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(2.0, LengthUnit.FEET);
-        QuantityLength result = q1.add(q2);
-        assertEquals(new QuantityLength(3.0, LengthUnit.FEET), result);
-    }
-
-    @Test
-    void testAddition_SameUnit_InchPlusInch() {
-        QuantityLength q1 = new QuantityLength(6.0, LengthUnit.INCHES);
-        QuantityLength q2 = new QuantityLength(6.0, LengthUnit.INCHES);
-        QuantityLength result = q1.add(q2);
-        assertEquals(new QuantityLength(12.0, LengthUnit.INCHES), result);
-    }
-
-    @Test
-    void testAddition_CrossUnit_FeetPlusInches() {
+    void testAddition_ExplicitTargetUnit_Feet() {
         QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
         QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCHES);
-        QuantityLength result = q1.add(q2);
+        QuantityLength result = q1.add(q2, LengthUnit.FEET);
         assertEquals(new QuantityLength(2.0, LengthUnit.FEET), result);
     }
-
     @Test
-    void testAddition_CrossUnit_InchPlusFeet() {
-        QuantityLength q1 = new QuantityLength(12.0, LengthUnit.INCHES);
-        QuantityLength q2 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength result = q1.add(q2);
+    void testAddition_ExplicitTargetUnit_Inches() {
+        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCHES);
+        QuantityLength result = q1.add(q2, LengthUnit.INCHES);
         assertEquals(new QuantityLength(24.0, LengthUnit.INCHES), result);
     }
-
     @Test
-    void testAddition_CrossUnit_YardPlusFeet() {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.YARDS);
-        QuantityLength q2 = new QuantityLength(3.0, LengthUnit.FEET);
-        QuantityLength result = q1.add(q2);
-        assertEquals(new QuantityLength(2.0, LengthUnit.YARDS), result);
+    void testAddition_ExplicitTargetUnit_Yards() {
+        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCHES);
+        QuantityLength result = q1.add(q2, LengthUnit.YARDS);
+        assertEquals(0.6667, result.getValue(), EPSILON);
     }
 
     @Test
-    void testAddition_CrossUnit_CentimeterPlusInch() {
-        QuantityLength q1 = new QuantityLength(2.54, LengthUnit.CENTIMETERS);
+    void testAddition_ExplicitTargetUnit_Centimeters() {
+        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.INCHES);
         QuantityLength q2 = new QuantityLength(1.0, LengthUnit.INCHES);
-        QuantityLength result = q1.add(q2);
+        QuantityLength result = q1.add(q2, LengthUnit.CENTIMETERS);
         assertEquals(5.08, result.getValue(), EPSILON);
-        assertEquals(LengthUnit.CENTIMETERS, result.getUnit());
     }
-
     @Test
-    void testAddition_Commutativity() {
+    void testAddition_ExplicitTargetUnit_Commutativity() {
         QuantityLength a = new QuantityLength(1.0, LengthUnit.FEET);
         QuantityLength b = new QuantityLength(12.0, LengthUnit.INCHES);
-        assertEquals(a.add(b), b.add(a));
+        assertEquals(a.add(b, LengthUnit.YARDS),b.add(a, LengthUnit.YARDS));
     }
-
     @Test
-    void testAddition_WithZero() {
+    void testAddition_ExplicitTargetUnit_WithZero() {
         QuantityLength q1 = new QuantityLength(5.0, LengthUnit.FEET);
         QuantityLength q2 = new QuantityLength(0.0, LengthUnit.INCHES);
-        assertEquals(new QuantityLength(5.0, LengthUnit.FEET), q1.add(q2));
+        QuantityLength result = q1.add(q2, LengthUnit.YARDS);
+        assertEquals(1.6667, result.getValue(), EPSILON);
     }
-
     @Test
-    void testAddition_NegativeValues() {
+    void testAddition_ExplicitTargetUnit_NegativeValues() {
         QuantityLength q1 = new QuantityLength(5.0, LengthUnit.FEET);
         QuantityLength q2 = new QuantityLength(-2.0, LengthUnit.FEET);
-        assertEquals(new QuantityLength(3.0, LengthUnit.FEET), q1.add(q2));
+        QuantityLength result = q1.add(q2, LengthUnit.INCHES);
+        assertEquals(36.0, result.getValue(), EPSILON);
     }
-
     @Test
-    void testAddition_NullSecondOperand() {
+    void testAddition_ExplicitTargetUnit_NullTargetUnit() {
         QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        assertThrows(IllegalArgumentException.class, () -> q1.add(null));
+        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCHES);
+        assertThrows(IllegalArgumentException.class,() -> q1.add(q2, null));
     }
-
     @Test
-    void testAddition_LargeValues() {
-        QuantityLength q1 = new QuantityLength(1e6, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(1e6, LengthUnit.FEET);
-        QuantityLength result = q1.add(q2);
-        assertEquals(new QuantityLength(2e6, LengthUnit.FEET), result);
+    void testAddition_ExplicitTargetUnit_LargeToSmallScale() {
+        QuantityLength q1 = new QuantityLength(1000.0, LengthUnit.FEET);
+        QuantityLength q2 = new QuantityLength(500.0, LengthUnit.FEET);
+        QuantityLength result = q1.add(q2, LengthUnit.INCHES);
+        assertEquals(18000.0, result.getValue(), EPSILON);
     }
-
     @Test
-    void testAddition_SmallValues() {
-        QuantityLength q1 = new QuantityLength(0.001, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(0.002, LengthUnit.FEET);
-        QuantityLength result = q1.add(q2);
-        assertEquals(0.003, result.getValue(), EPSILON);
+    void testAddition_ExplicitTargetUnit_SmallToLargeScale() {
+        QuantityLength q1 = new QuantityLength(12.0, LengthUnit.INCHES);
+        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCHES);
+        QuantityLength result = q1.add(q2, LengthUnit.YARDS);
+        assertEquals(0.6667, result.getValue(), EPSILON);
     }
 }

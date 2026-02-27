@@ -18,7 +18,6 @@ public final class QuantityLength {
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("Value must be finite");
         }
-
         this.value = value;
         this.unit = unit;
     }
@@ -31,61 +30,53 @@ public final class QuantityLength {
         return unit;
     }
 
-    /**
-     * Adds another QuantityLength.
-     * Result is returned in the unit of the first operand.
-     */
+    // UC6 – result in unit of first operand
     public QuantityLength add(QuantityLength other) {
+        return add(other, this.unit);
+    }
+
+    // UC7 – explicit target unit
+    public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
 
         if (other == null) {
             throw new IllegalArgumentException("Second operand cannot be null");
         }
 
-        // Convert both to base unit (FEET)
-        double base1 = this.unit.toBaseUnit(this.value);
-        double base2 = other.unit.toBaseUnit(other.value);
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+        double result = addInternal(this, other, targetUnit);
+        return new QuantityLength(result, targetUnit);
+    }
+    private static double addInternal(
+            QuantityLength q1,
+            QuantityLength q2,
+            LengthUnit targetUnit) {
 
-        // Add
+        double base1 = q1.unit.toBaseUnit(q1.value);
+        double base2 = q2.unit.toBaseUnit(q2.value);
         double baseSum = base1 + base2;
-
-        // Convert back to unit of first operand
-        double resultValue = this.unit.fromBaseUnit(baseSum);
-
-        return new QuantityLength(resultValue, this.unit);
+        return targetUnit.fromBaseUnit(baseSum);
     }
-
-    /**
-     * Static overloaded add method
-     */
-    public static QuantityLength add(
-            double value1, LengthUnit unit1,
-            double value2, LengthUnit unit2) {
-
-        return new QuantityLength(value1, unit1)
-                .add(new QuantityLength(value2, unit2));
-    }
-
     @Override
     public boolean equals(Object obj) {
 
-        if (this == obj) return true;
+        if (this == obj) { 
+        	return true;
+        }
 
-        if (!(obj instanceof QuantityLength)) return false;
-
+        if (!(obj instanceof QuantityLength)) {
+        	return false;
+        }
         QuantityLength other = (QuantityLength) obj;
-
-        // Compare using base unit for accuracy
         double base1 = this.unit.toBaseUnit(this.value);
         double base2 = other.unit.toBaseUnit(other.value);
-
         return Math.abs(base1 - base2) < EPSILON;
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(unit.toBaseUnit(value));
     }
-
     @Override
     public String toString() {
         return "Quantity(" + value + ", " + unit + ")";
