@@ -2,26 +2,24 @@ package com.feetmeasurement;
 
 public enum LengthUnit implements IMeasurable {
 
-    FEET(12.0),
-    INCHES(1.0),
-    YARDS(36.0),
-    CENTIMETERS(0.393701);
+    INCH(0.0254, "Inch"),
+    FOOT(0.3048, "Foot"),
+    YARD(0.9144, "Yard"),
+    CENTIMETER(0.01, "Centimeter");
+
     private final double factor;
-    LengthUnit(double factor) {
+    private final String name;
+
+    LengthUnit(double factor, String name) {
         this.factor = factor;
+        this.name = name;
     }
+
     public double getConversionFactor() {
         return factor;
     }
-    public double convertToBaseUnit(double value) {
-        return value * factor;
-    }
-
-    public double convertFromBaseUnit(double baseValue) {
-        return baseValue / factor;
-    }
 
     public String getUnitName() {
-        return name();
+        return name;
     }
 }

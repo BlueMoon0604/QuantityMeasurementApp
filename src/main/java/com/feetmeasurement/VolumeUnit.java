@@ -1,15 +1,15 @@
 package com.feetmeasurement;
 
-public enum WeightUnit implements IMeasurable {
+public enum VolumeUnit implements IMeasurable {
 
-    GRAM(0.001, "Gram"),
-    KILOGRAM(1.0, "Kilogram"),
-    TONNE(1000.0, "Tonne");
+    LITRE(1.0, "Litre"),
+    MILLILITRE(0.001, "Millilitre"),
+    GALLON(3.78541, "Gallon");
 
     private final double factor;
     private final String name;
 
-    WeightUnit(double factor, String name) {
+    VolumeUnit(double factor, String name) {
         this.factor = factor;
         this.name = name;
     }
