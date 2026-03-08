@@ -1,16 +1,13 @@
 package com.feetmeasurement;
 
-public class Quantity<U extends IMeasurable> {
+public class Quantity<U extends Enum<U> & IMeasurable> {
 
     private final double value;
     private final U unit;
 
-    private static final double EPSILON = 0.0001;
-
     public Quantity(double value, U unit) {
         if (unit == null)
             throw new IllegalArgumentException("Unit cannot be null");
-
         this.value = value;
         this.unit = unit;
     }
@@ -23,48 +20,67 @@ public class Quantity<U extends IMeasurable> {
         return unit;
     }
 
-    public double toBaseUnit() {
-        return unit.convertToBaseUnit(value);
-    }
-
     public Quantity<U> convertTo(U targetUnit) {
-        double base = toBaseUnit();
-        double converted = targetUnit.convertFromBaseUnit(base);
+        double baseValue = unit.convertToBaseUnit(value);
+        double converted = targetUnit.convertFromBaseUnit(baseValue);
         return new Quantity<>(converted, targetUnit);
     }
 
     public Quantity<U> add(Quantity<U> other) {
-        double sumBase = this.toBaseUnit() + other.toBaseUnit();
+        if (other == null)
+            throw new IllegalArgumentException();
+
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        double sumBase = base1 + base2;
         double result = unit.convertFromBaseUnit(sumBase);
+
         return new Quantity<>(result, unit);
     }
 
-    public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        double sumBase = this.toBaseUnit() + other.toBaseUnit();
-        double result = targetUnit.convertFromBaseUnit(sumBase);
-        return new Quantity<>(result, targetUnit);
+    public Quantity<U> subtract(Quantity<U> other) {
+        if (other == null)
+            throw new IllegalArgumentException();
+
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        double diffBase = base1 - base2;
+        double result = unit.convertFromBaseUnit(diffBase);
+
+        return new Quantity<>(result, unit);
+    }
+
+    public double divide(Quantity<U> other) {
+        if (other == null)
+            throw new IllegalArgumentException();
+
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        if (base2 == 0)
+            throw new ArithmeticException();
+
+        return base1 / base2;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Quantity<?> other)) return false;
 
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        try {
+            double base1 = unit.convertToBaseUnit(value);
+            double base2 = ((IMeasurable) other.unit).convertToBaseUnit(other.value);
+            return Math.abs(base1 - base2) < 0.0001;
+        } catch (Exception e) {
             return false;
         }
-        Quantity<?> other = (Quantity<?>) obj;
-        return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < EPSILON;
     }
 
     @Override
     public int hashCode() {
-        return Double.hashCode(toBaseUnit());
-    }
-
-    @Override
-    public String toString() {
-        return "Quantity(" + value + ", " + unit.getUnitName() + ")";
+        return Double.hashCode(unit.convertToBaseUnit(value));
     }
 }
