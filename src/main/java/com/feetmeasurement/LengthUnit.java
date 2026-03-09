@@ -1,15 +1,17 @@
 package com.feetmeasurement;
 
+
 public enum LengthUnit implements IMeasurable {
-    INCH(1.0),
-    FEET(12.0),
-    YARD(36.0),
-    CENTIMETRE(0.393701);
+    INCH(0.0254),
+    FEET(0.3048),
+    YARD(0.9144),
+    CENTIMETER(0.01),
+    METER(1.0);
 
     private final double conversionFactor;
 
-    LengthUnit(double conversionFactor) {
-        this.conversionFactor = conversionFactor;
+    LengthUnit(double factor) {
+        this.conversionFactor = factor;
     }
 
     @Override
@@ -19,6 +21,6 @@ public enum LengthUnit implements IMeasurable {
 
     @Override
     public String getUnitName() {
-        return this.name();
+        return name().toLowerCase();
     }
 }

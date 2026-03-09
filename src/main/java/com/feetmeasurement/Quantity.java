@@ -29,24 +29,47 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> add(Quantity<U> other) {
-        validateArithmetic(other, "addition");
-        double sum = unit.convertToBaseUnit(value) + other.unit.convertToBaseUnit(other.value);
-        return new Quantity<>(unit.convertFromBaseUnit(sum), unit);
-    }
 
+        if (other == null)
+            throw new IllegalArgumentException("Cannot add null");
+
+        if (!unit.supportsArithmetic())
+            throw new UnsupportedOperationException("Addition not supported for this unit");
+
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        double sumBase = base1 + base2;
+
+        double result = unit.convertFromBaseUnit(sumBase);
+
+        return new Quantity<>(result, unit);
+    }
     public Quantity<U> subtract(Quantity<U> other) {
         validateArithmetic(other, "subtraction");
         double diff = unit.convertToBaseUnit(value) - other.unit.convertToBaseUnit(other.value);
         return new Quantity<>(unit.convertFromBaseUnit(diff), unit);
     }
 
-    public double divide(Quantity<U> other) {
-        validateArithmetic(other, "division");
-        double baseOther = other.unit.convertToBaseUnit(other.value);
-        if (baseOther == 0.0) throw new ArithmeticException("Cannot divide by zero");
-        return unit.convertToBaseUnit(value) / baseOther;
-    }
+    public Quantity<U> divide(Quantity<U> other) {
+        if (other == null)
+            throw new IllegalArgumentException("Cannot divide by null");
 
+        if (!unit.supportsArithmetic())
+            throw new UnsupportedOperationException("Division not supported");
+
+        if (other.getValue() == 0)
+            throw new ArithmeticException("Division by zero");
+
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        double resultBase = base1 / base2;
+
+        double result = unit.convertFromBaseUnit(resultBase);
+
+        return new Quantity<>(result, unit);
+    }
     private void validateArithmetic(Quantity<U> other, String operation) {
         if (other == null) throw new IllegalArgumentException("Operand cannot be null");
         if (!unit.getClass().equals(other.unit.getClass()))

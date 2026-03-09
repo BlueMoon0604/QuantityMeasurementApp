@@ -1,37 +1,39 @@
 package com.feetmeasurement;
 
+import com.feetmeasurement.controller.QuantityMeasurementController;
+import com.feetmeasurement.dto.QuantityDTO;
+import com.feetmeasurement.repository.IQuantityMeasurementRepository;
+import com.feetmeasurement.repository.QuantityMeasurementCacheRepository;
+import com.feetmeasurement.service.QuantityMeasurementServiceImpl;
+import com.feetmeasurement.service.IQuantityMeasurementService;
+
 public class QuantityMeasurementApp {
+
     public static void main(String[] args) {
-        Quantity<LengthUnit> length1 = new Quantity<>(1.0, LengthUnit.FEET);
-        Quantity<LengthUnit> length2 = new Quantity<>(12.0, LengthUnit.INCH);
-        System.out.println("length1 == length2? " + length1.equals(length2));
-        System.out.println("Converted: " + length1.convertTo(LengthUnit.INCH));
-        System.out.println("Addition: " + length1.add(length2));
-        System.out.println("Subtraction: " + length1.subtract(length2));
-        System.out.println("Division: " + length1.divide(new Quantity<>(6.0, LengthUnit.INCH)));
+        IQuantityMeasurementRepository repository = QuantityMeasurementCacheRepository.getInstance();
+        IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repository);
+        QuantityMeasurementController controller = new QuantityMeasurementController(service);
 
-        Quantity<WeightUnit> weight1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-        Quantity<WeightUnit> weight2 = new Quantity<>(1000.0, WeightUnit.GRAM);
-        System.out.println("weight1 == weight2? " + weight1.equals(weight2));
-        System.out.println("Weight Addition: " + weight1.add(weight2));
+        System.out.println("=== Quantity Measurement Application ===");
+        QuantityDTO<LengthUnit> length1 = new QuantityDTO<>(5.0, LengthUnit.FEET);
+        QuantityDTO<LengthUnit> length2 = new QuantityDTO<>(60.0, LengthUnit.INCH);
 
-        Quantity<VolumeUnit> volume1 = new Quantity<>(1.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> volume2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-        System.out.println("volume1 == volume2? " + volume1.equals(volume2));
-        System.out.println("Volume Addition: " + volume1.add(volume2));
+        QuantityDTO<LengthUnit> compareResult = controller.performCompare(length1, length2);
+        System.out.println("Compare Result: " + compareResult.getValue());
 
-        Quantity<VolumeUnit> gallon = new Quantity<>(1.0, VolumeUnit.GALLON);
-        System.out.println("1 Gallon in Litres: " + gallon.convertTo(VolumeUnit.LITRE));
+        QuantityDTO<WeightUnit> weight1 = new QuantityDTO<>(2.0, WeightUnit.KILOGRAM);
+        QuantityDTO<WeightUnit> weight2 = new QuantityDTO<>(500.0, WeightUnit.GRAM);
 
-        // Temperature examples
-        Quantity<TemperatureUnit> tempC = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
-        Quantity<TemperatureUnit> tempF = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
-        System.out.println("0°C == 32°F? " + tempC.equals(tempF));
+        QuantityDTO<WeightUnit> addResult = controller.performAdd(weight1, weight2);
+        System.out.println("Addition Result: " + addResult.getValue() + " " + addResult.getUnit().getUnitName());
 
-        try {
-            tempC.add(new Quantity<>(10.0, TemperatureUnit.CELSIUS));
-        } catch (UnsupportedOperationException e) {
-            System.out.println("Addition on temperature: " + e.getMessage());
-        }
+        QuantityDTO<LengthUnit> lengthInMeters = controller.performConvert(length1, LengthUnit.METER);
+        System.out.println("Conversion Result: " + lengthInMeters.getValue() + " " + lengthInMeters.getUnit().getUnitName());
+
+        QuantityDTO<LengthUnit> subtractResult = controller.performSubtract(length1, length2);
+        System.out.println("Subtraction Result: " + subtractResult.getValue() + " " + subtractResult.getUnit().getUnitName());
+
+        QuantityDTO<LengthUnit> divideResult = controller.performDivide(length1, length2);
+        System.out.println("Division Result: " + divideResult.getValue());
     }
 }

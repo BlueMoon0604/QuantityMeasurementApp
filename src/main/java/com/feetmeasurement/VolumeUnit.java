@@ -1,14 +1,14 @@
 package com.feetmeasurement;
 
 public enum VolumeUnit implements IMeasurable {
-    MILLILITRE(1.0),
-    LITRE(1000.0),
-    GALLON(3785.41);
+    LITRE(1.0),
+    MILLILITRE(0.001),
+    GALLON(3.78541);
 
     private final double conversionFactor;
 
-    VolumeUnit(double conversionFactor) {
-        this.conversionFactor = conversionFactor;
+    VolumeUnit(double factor) {
+        this.conversionFactor = factor;
     }
 
     @Override
@@ -18,6 +18,6 @@ public enum VolumeUnit implements IMeasurable {
 
     @Override
     public String getUnitName() {
-        return this.name();
+        return name().toLowerCase();
     }
 }

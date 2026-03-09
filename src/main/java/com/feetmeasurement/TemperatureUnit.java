@@ -1,39 +1,26 @@
 package com.feetmeasurement;
 
-import java.util.function.Function;
 
 public enum TemperatureUnit implements IMeasurable {
 
-    CELSIUS(c -> c, c -> c),
-    FAHRENHEIT(f -> (f - 32) * 5 / 9, c -> c * 9 / 5 + 32),
-    KELVIN(k -> k - 273.15, c -> c + 273.15);
+    CELSIUS("Celsius"),
+    FAHRENHEIT("Fahrenheit"),
+    KELVIN("Kelvin");
 
-    private final Function<Double, Double> toCelsius;
-    private final Function<Double, Double> fromCelsius;
+    private final String unitName;
 
-    TemperatureUnit(Function<Double, Double> toCelsius, Function<Double, Double> fromCelsius) {
-        this.toCelsius = toCelsius;
-        this.fromCelsius = fromCelsius;
+    TemperatureUnit(String name) {
+        this.unitName = name;
     }
 
     @Override
     public double getConversionFactor() {
-        return 1.0; // handled via functions
+        return 1; // not used for temperature
     }
 
     @Override
-    public double convertToBaseUnit(double value) {
-        return toCelsius.apply(value);
-    }
-
-    @Override
-    public double convertFromBaseUnit(double baseValue) {
-        return fromCelsius.apply(baseValue);
-    }
-
-    @Override
-    public void validateOperationSupport(String operation) {
-        throw new UnsupportedOperationException("Temperature does not support " + operation);
+    public String getUnitName() {
+        return unitName;
     }
 
     @Override
@@ -41,8 +28,39 @@ public enum TemperatureUnit implements IMeasurable {
         return false;
     }
 
+    // Convert everything to base unit (Celsius)
     @Override
-    public String getUnitName() {
-        return this.name();
+    public double convertToBaseUnit(double value) {
+        switch (this) {
+            case CELSIUS:
+                return value;
+
+            case FAHRENHEIT:
+                return (value - 32) * 5 / 9;
+
+            case KELVIN:
+                return value - 273.15;
+
+            default:
+                return value;
+        }
+    }
+
+    // Convert from base unit (Celsius) to target
+    @Override
+    public double convertFromBaseUnit(double baseValue) {
+        switch (this) {
+            case CELSIUS:
+                return baseValue;
+
+            case FAHRENHEIT:
+                return (baseValue * 9 / 5) + 32;
+
+            case KELVIN:
+                return baseValue + 273.15;
+
+            default:
+                return baseValue;
+        }
     }
 }

@@ -44,7 +44,7 @@ public class QuantityMeasurementAppTest {
     void testConversion_Volume() {
         Quantity<VolumeUnit> q1 = new Quantity<>(1.0, VolumeUnit.GALLON);
         Quantity<VolumeUnit> q2 = q1.convertTo(VolumeUnit.LITRE);
-        assertEquals(3.7854099999999997, q2.getValue(), 0.01);
+        assertEquals(3.7854, q2.getValue(), 0.01);
     }
 
     @Test
@@ -61,6 +61,22 @@ public class QuantityMeasurementAppTest {
         Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
         Quantity<LengthUnit> result = q1.add(q2);
         assertEquals(2.0, result.getValue(), 0.0001);
+    }
+
+    @Test
+    void testSubtraction_Length() {
+        Quantity<LengthUnit> q1 = new Quantity<>(3.0, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
+        Quantity<LengthUnit> result = q1.subtract(q2);
+        assertEquals(2.0, result.getValue(), 0.0001);
+    }
+
+    @Test
+    void testDivision_ByNonZero() {
+        Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(2.0, LengthUnit.FEET);
+        Quantity<LengthUnit> result = q1.divide(q2);
+        assertEquals(16.404199475065617, result.getValue(), 0.0001);
     }
 
     @Test

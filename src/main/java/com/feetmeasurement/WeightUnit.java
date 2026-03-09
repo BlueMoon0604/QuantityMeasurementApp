@@ -1,14 +1,16 @@
 package com.feetmeasurement;
 
+
 public enum WeightUnit implements IMeasurable {
-    GRAM(1.0),
-    KILOGRAM(1000.0),
-    TONNE(1_000_000.0);
+    GRAM(0.001),
+    KILOGRAM(1.0),
+    POUND(0.453592),
+    OUNCE(0.0283495);
 
     private final double conversionFactor;
 
-    WeightUnit(double conversionFactor) {
-        this.conversionFactor = conversionFactor;
+    WeightUnit(double factor) {
+        this.conversionFactor = factor;
     }
 
     @Override
@@ -18,6 +20,6 @@ public enum WeightUnit implements IMeasurable {
 
     @Override
     public String getUnitName() {
-        return this.name();
+        return name().toLowerCase();
     }
 }
