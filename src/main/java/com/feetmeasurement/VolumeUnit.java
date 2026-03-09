@@ -1,25 +1,23 @@
 package com.feetmeasurement;
 
 public enum VolumeUnit implements IMeasurable {
-    MILLILITRE(1.0, "Millilitre"),
-    LITRE(1000.0, "Litre"),
-    GALLON(3785.41, "Gallon");
+    MILLILITRE(1.0),
+    LITRE(1000.0),
+    GALLON(3785.41);
 
-    private final double factor;
-    private final String name;
+    private final double conversionFactor;
 
-    VolumeUnit(double factor, String name) {
-        this.factor = factor;
-        this.name = name;
+    VolumeUnit(double conversionFactor) {
+        this.conversionFactor = conversionFactor;
     }
 
     @Override
     public double getConversionFactor() {
-        return factor;
+        return conversionFactor;
     }
 
     @Override
     public String getUnitName() {
-        return name;
+        return this.name();
     }
 }
