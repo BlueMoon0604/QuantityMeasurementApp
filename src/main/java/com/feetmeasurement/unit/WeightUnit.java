@@ -1,13 +1,15 @@
-package com.feetmeasurement;
+package com.feetmeasurement.unit;
 
-public enum VolumeUnit implements IMeasurable {
-    LITRE(1.0),
-    MILLILITRE(0.001),
-    GALLON(3.78541);
+
+public enum WeightUnit implements IMeasurable {
+    GRAM(0.001),
+    KILOGRAM(1.0),
+    POUND(0.453592),
+    OUNCE(0.0283495);
 
     private final double conversionFactor;
 
-    VolumeUnit(double factor) {
+    WeightUnit(double factor) {
         this.conversionFactor = factor;
     }
 
@@ -19,5 +21,9 @@ public enum VolumeUnit implements IMeasurable {
     @Override
     public String getUnitName() {
         return name().toLowerCase();
+    }
+    @Override
+    public String getMeasurementType() {
+        return "WEIGHT";
     }
 }

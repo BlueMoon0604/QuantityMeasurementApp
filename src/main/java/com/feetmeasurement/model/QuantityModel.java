@@ -1,6 +1,6 @@
 package com.feetmeasurement.model;
 
-import com.feetmeasurement.IMeasurable;
+import com.feetmeasurement.unit.IMeasurable;
 
 public class QuantityModel<U extends IMeasurable> {
     private double value;

@@ -1,24 +1,70 @@
 package com.feetmeasurement.repository;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.feetmeasurement.entity.QuantityMeasurementEntity;
 
 public class QuantityMeasurementCacheRepository implements IQuantityMeasurementRepository {
-    private static QuantityMeasurementCacheRepository instance;
-    private List<QuantityMeasurementEntity> cache;
 
-    private QuantityMeasurementCacheRepository() {
-        cache = new ArrayList<>();
+    private final List<QuantityMeasurementEntity> records = new ArrayList<>();
+
+    @Override
+    public void save(QuantityMeasurementEntity entity) {
+        records.add(entity);
     }
 
-    public static QuantityMeasurementCacheRepository getInstance() {
-        if (instance == null) instance = new QuantityMeasurementCacheRepository();
-        return instance;
+    @Override
+    public List<QuantityMeasurementEntity> findAll() {
+        return new ArrayList<>(records);
     }
 
-    public void save(QuantityMeasurementEntity entity) { cache.add(entity); }
+    @Override
+    public List<QuantityMeasurementEntity> getMeasurementsByOperation(String operation) {
+        List<QuantityMeasurementEntity> result = new ArrayList<>();
 
-    public List<QuantityMeasurementEntity> findAll() { return cache; }
+        for (QuantityMeasurementEntity entity : records) {
+            if (entity.getOperation() != null &&
+                entity.getOperation().equalsIgnoreCase(operation)) {
+                result.add(entity);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<QuantityMeasurementEntity> getMeasurementsByType(String type) {
+        List<QuantityMeasurementEntity> result = new ArrayList<>();
+
+        for (QuantityMeasurementEntity entity : records) {
+            if (entity.getMeasurementType() != null &&
+                entity.getMeasurementType().equalsIgnoreCase(type)) {
+                result.add(entity);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public int getTotalCount() {
+        return records.size();
+    }
+
+    @Override
+    public void deleteAll() {
+        records.clear();
+    }
+
+    @Override
+    public String getPoolStatistics() {
+        return "Cache repository - no connection pool";
+    }
+
+    @Override
+    public void releaseResources() {
+        System.out.println("No resources to release in cache repository");
+    }
 }

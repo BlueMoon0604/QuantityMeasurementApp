@@ -1,4 +1,4 @@
-package com.feetmeasurement;
+package com.feetmeasurement.unit;
 
 
 public enum LengthUnit implements IMeasurable {
@@ -22,5 +22,9 @@ public enum LengthUnit implements IMeasurable {
     @Override
     public String getUnitName() {
         return name().toLowerCase();
+    }
+    @Override
+    public String getMeasurementType() {
+        return "LENGTH";
     }
 }

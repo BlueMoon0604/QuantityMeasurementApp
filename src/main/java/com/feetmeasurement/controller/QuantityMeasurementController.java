@@ -1,6 +1,6 @@
 package com.feetmeasurement.controller;
 
-import com.feetmeasurement.IMeasurable;
+import com.feetmeasurement.unit.IMeasurable;
 import com.feetmeasurement.dto.QuantityDTO;
 import com.feetmeasurement.service.IQuantityMeasurementService;
 

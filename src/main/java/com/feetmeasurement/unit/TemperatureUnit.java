@@ -1,4 +1,4 @@
-package com.feetmeasurement;
+package com.feetmeasurement.unit;
 
 
 public enum TemperatureUnit implements IMeasurable {
@@ -62,5 +62,9 @@ public enum TemperatureUnit implements IMeasurable {
             default:
                 return baseValue;
         }
+    }
+    @Override
+    public String getMeasurementType() {
+        return "TEMPERATURE";
     }
 }

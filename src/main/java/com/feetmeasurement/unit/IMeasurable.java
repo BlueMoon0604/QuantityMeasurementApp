@@ -1,4 +1,5 @@
-package com.feetmeasurement;
+package com.feetmeasurement.unit;
+
 
 public interface IMeasurable {
 
@@ -13,6 +14,9 @@ public interface IMeasurable {
     }
 
     String getUnitName();
+
+    // NEW for UC16
+    String getMeasurementType();
 
     default void validateOperationSupport(String operation) {
         // Default: all units support arithmetic

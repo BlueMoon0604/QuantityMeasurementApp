@@ -1,6 +1,6 @@
 package com.feetmeasurement.dto;
 
-import com.feetmeasurement.IMeasurable;
+import com.feetmeasurement.unit.IMeasurable;
 
 public class QuantityDTO<U extends IMeasurable> {
     private double value;
