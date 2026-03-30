@@ -32,9 +32,10 @@ public class QuantityMeasurementController {
     }
 
     @PostMapping("/divide")
-    public QuantityMeasurementEntity divideQuantities(@Valid @RequestBody QuantityInputDTO input) {
+    public QuantityMeasurementEntity divide(@Valid @RequestBody QuantityInputDTO input) {
         return service.divide(input);
     }
+
     @PostMapping("/subtract")
     public QuantityMeasurementEntity subtract(@Valid @RequestBody QuantityInputDTO input) {
         return service.subtract(input);
@@ -51,7 +52,7 @@ public class QuantityMeasurementController {
     }
 
     @GetMapping("/history/operation/{operation}")
-    public List<QuantityMeasurementEntity> getHistory(@PathVariable String operation) {
+    public List<QuantityMeasurementEntity> getHistoryByOperation(@PathVariable String operation) {
         return service.getHistoryByOperation(operation);
     }
 

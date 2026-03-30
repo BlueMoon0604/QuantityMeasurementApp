@@ -2,26 +2,13 @@ package com.measurement.demo.unit;
 
 public interface IMeasurable {
 
-    double getConversionFactor();  
+    double getConversionFactor();
 
-    default double convertToBaseUnit(double value) {
-        return value * getConversionFactor();
-    }
+    String getUnitName();
 
-    default double convertFromBaseUnit(double baseValue) {
-        return baseValue / getConversionFactor();
-    }
     double toBaseUnit(double value);
 
     double fromBaseUnit(double value);
 
-    SupportsArithmetic supportsArithmetic = () -> true;
-
-    default boolean supportsArithmetic() {
-        return supportsArithmetic.isSupported();
-    }
-
-    String getUnitName();
-
-	void validateOperationSupport(String operation);
+    void validateOperationSupport(String operation);
 }

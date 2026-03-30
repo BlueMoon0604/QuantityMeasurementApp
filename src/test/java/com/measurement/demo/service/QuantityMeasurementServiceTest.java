@@ -20,10 +20,7 @@ public class QuantityMeasurementServiceTest {
     @BeforeEach
     void setup() {
         repository = mock(QuantityMeasurementRepository.class);
-        service = new QuantityMeasurementServiceImpl();
 
-        // manually inject mock repository
-        service.setRepository(repository);
 
         // save method ko stub kar do
         when(repository.save(any())).thenAnswer(i -> i.getArgument(0));

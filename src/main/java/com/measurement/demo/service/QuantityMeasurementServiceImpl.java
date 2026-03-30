@@ -4,241 +4,177 @@ import com.measurement.demo.dto.QuantityDTO;
 import com.measurement.demo.dto.QuantityInputDTO;
 import com.measurement.demo.entity.QuantityMeasurementEntity;
 import com.measurement.demo.repository.QuantityMeasurementRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.measurement.demo.unit.IMeasurable;
+import com.measurement.demo.unit.LengthUnit;
+import com.measurement.demo.unit.TemperatureUnit;
+import com.measurement.demo.unit.VolumeUnit;
+import com.measurement.demo.unit.WeightUnit;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
 
-    @Autowired
-    private QuantityMeasurementRepository repository;
+    private final QuantityMeasurementRepository repository;
 
-    // Convert TO base
-    private double convertToBaseUnit(QuantityDTO dto) {
-
-        String unit = dto.getUnit().toUpperCase();
-        String type = dto.getMeasurementType();
-        double value = dto.getValue();
-
-        if (type.equals("LengthUnit")) {
-            if (unit.equals("FEET")) return value * 12;
-            if (unit.equals("INCHES")) return value;
-        }
-
-        if (type.equals("WeightUnit")) {
-            if (unit.equals("KILOGRAM")) return value * 1000;
-            if (unit.equals("GRAM")) return value;
-        }
-
-        if (type.equals("VolumeUnit")) {
-            if (unit.equals("LITRE")) return value * 1000;
-            if (unit.equals("MILLILITRE")) return value;
-        }
-
-        if (type.equals("TemperatureUnit")) {
-            if (unit.equals("CELSIUS")) return value;
-            if (unit.equals("FAHRENHEIT")) return (value - 32) * 5 / 9;
-        }
-
-        throw new RuntimeException("Invalid Unit");
-    }
-    // convert from base 
-    private double convertFromBaseUnit(double value, String unit, String type) {
-
-        if (type.equals("LengthUnit")) {
-            if (unit.equalsIgnoreCase("FEET")) return value / 12;
-            if (unit.equalsIgnoreCase("INCHES")) return value;
-        }
-
-        if (type.equals("WeightUnit")) {
-            if (unit.equalsIgnoreCase("KILOGRAM")) return value / 1000;
-            if (unit.equalsIgnoreCase("GRAM")) return value;
-        }
-
-        if (type.equals("VolumeUnit")) {
-            if (unit.equalsIgnoreCase("LITRE")) return value / 1000;
-            if (unit.equalsIgnoreCase("MILLILITRE")) return value;
-        }
-
-        if (type.equals("TemperatureUnit")) {
-            if (unit.equalsIgnoreCase("CELSIUS")) return value;
-            if (unit.equalsIgnoreCase("FAHRENHEIT")) return (value * 9 / 5) + 32;
-        }
-
-        throw new RuntimeException("Invalid Unit");
+    public QuantityMeasurementServiceImpl(QuantityMeasurementRepository repository) {
+        this.repository = repository;
     }
 
-    // Check same type
-    private boolean isSameType(QuantityInputDTO input) {
-        return input.getThisQuantityDTO().getMeasurementType()
-                .equals(input.getThatQuantityDTO().getMeasurementType());
-    }
-
-    // add
-    @Override
-    public QuantityMeasurementEntity add(QuantityInputDTO input) {
-
-        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
-
-        if (!isSameType(input)) {
-            entity.setError(true);
-            entity.setErrorMessage("Different measurement types");
-            return repository.save(entity);
-        }
-
-        double val1 = convertToBaseUnit(input.getThisQuantityDTO());
-        double val2 = convertToBaseUnit(input.getThatQuantityDTO());
-
-        double resultBase = val1 + val2;
-
-        String unit = input.getThisQuantityDTO().getUnit();
-        String type = input.getThisQuantityDTO().getMeasurementType();
-
-        double finalResult = convertFromBaseUnit(resultBase, unit, type);
-
-        entity.setResultValue(finalResult);
-        entity.setResultUnit(unit);
-        entity.setOperation("ADD");
-        entity.setError(false);
-
-        return repository.save(entity);
-    }
-
-    // subtract
-    @Override
-    public QuantityMeasurementEntity subtract(QuantityInputDTO input) {
-
-        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
-
-        if (!isSameType(input)) {
-            entity.setError(true);
-            return repository.save(entity);
-        }
-
-        double val1 = convertToBaseUnit(input.getThisQuantityDTO());
-        double val2 = convertToBaseUnit(input.getThatQuantityDTO());
-
-        double resultBase = val1 - val2;
-
-        String unit = input.getThisQuantityDTO().getUnit();
-        String type = input.getThisQuantityDTO().getMeasurementType();
-
-        double finalResult = convertFromBaseUnit(resultBase, unit, type);
-
-        entity.setResultValue(finalResult);
-        entity.setResultUnit(unit);
-        entity.setOperation("SUBTRACT");
-        entity.setError(false);
-
-        return repository.save(entity);
-    }
-
-    // multiply
-    @Override
-    public QuantityMeasurementEntity multiply(QuantityInputDTO input) {
-
-        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
-
-        if (!isSameType(input)) {
-            entity.setError(true);
-            return repository.save(entity);
-        }
-
-        double val1 = convertToBaseUnit(input.getThisQuantityDTO());
-        double val2 = convertToBaseUnit(input.getThatQuantityDTO());
-
-        double resultBase = val1 * val2;
-
-        String unit = input.getThisQuantityDTO().getUnit();
-        String type = input.getThisQuantityDTO().getMeasurementType();
-
-        double finalResult = convertFromBaseUnit(resultBase, unit, type);
-
-        entity.setResultValue(finalResult);
-        entity.setResultUnit(unit);
-        entity.setOperation("MULTIPLY");
-        entity.setError(false);
-
-        return repository.save(entity);
-    }
-
-    //divide
-    @Override
-    public QuantityMeasurementEntity divide(QuantityInputDTO input) {
-
-        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
-
-        if (!isSameType(input)) {
-            entity.setError(true);
-            return repository.save(entity);
-        }
-
-        double val1 = convertToBaseUnit(input.getThisQuantityDTO());
-        double val2 = convertToBaseUnit(input.getThatQuantityDTO());
-
-        if (val2 == 0) {
-            entity.setError(true);
-            entity.setErrorMessage("Divide by zero");
-            return repository.save(entity);
-        }
-
-        double result = val1 / val2;
-
-        entity.setResultValue(result);
-        entity.setOperation("DIVIDE");
-        entity.setError(false);
-
-        return repository.save(entity);
-    }
-
-    // compare
     @Override
     public QuantityMeasurementEntity compare(QuantityInputDTO input) {
+        QuantityDTO thisQty = input.getThisQuantityDTO();
+        QuantityDTO thatQty = input.getThatQuantityDTO();
 
-        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+        IMeasurable thisUnit = getUnit(thisQty.getMeasurementType(), thisQty.getUnit());
+        IMeasurable thatUnit = getUnit(thatQty.getMeasurementType(), thatQty.getUnit());
 
-        if (!isSameType(input)) {
-            entity.setError(true);
-            return repository.save(entity);
+        thisUnit.validateOperationSupport("COMPARE");
+        thatUnit.validateOperationSupport("COMPARE");
+
+        double thisBase = thisUnit.toBaseUnit(thisQty.getValue());
+        double thatBase = thatUnit.toBaseUnit(thatQty.getValue());
+
+        String result;
+        if (Double.compare(thisBase, thatBase) == 0) {
+            result = "EQUAL";
+        } else if (thisBase > thatBase) {
+            result = "GREATER";
+        } else {
+            result = "LESSER";
         }
 
-        double val1 = convertToBaseUnit(input.getThisQuantityDTO());
-        double val2 = convertToBaseUnit(input.getThatQuantityDTO());
-
-        entity.setResultString(String.valueOf(val1 == val2));
-        entity.setOperation("COMPARE");
+        QuantityMeasurementEntity entity = createBaseEntity(input, "COMPARE");
+        entity.setResultString(result);
         entity.setError(false);
 
         return repository.save(entity);
     }
 
-    // convert
     @Override
     public QuantityMeasurementEntity convert(QuantityInputDTO input) {
+        QuantityDTO thisQty = input.getThisQuantityDTO();
+        QuantityDTO thatQty = input.getThatQuantityDTO();
 
-        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+        IMeasurable thisUnit = getUnit(thisQty.getMeasurementType(), thisQty.getUnit());
+        IMeasurable thatUnit = getUnit(thatQty.getMeasurementType(), thatQty.getUnit());
 
-        QuantityDTO source = input.getThisQuantityDTO();
-        QuantityDTO target = input.getThatQuantityDTO();
+        thisUnit.validateOperationSupport("CONVERT");
+        thatUnit.validateOperationSupport("CONVERT");
 
-        double base = convertToBaseUnit(source);
-        double result = convertFromBaseUnit(base, target.getUnit(), source.getMeasurementType());
+        double baseValue = thisUnit.toBaseUnit(thisQty.getValue());
+        double convertedValue = thatUnit.fromBaseUnit(baseValue);
 
-        entity.setResultValue(result);
-        entity.setResultUnit(target.getUnit());
-        entity.setOperation("CONVERT");
+        QuantityMeasurementEntity entity = createBaseEntity(input, "CONVERT");
+        entity.setResultValue(convertedValue);
+        entity.setResultUnit(thatQty.getUnit());
         entity.setError(false);
 
         return repository.save(entity);
     }
 
-    // history
     @Override
-    public List<QuantityMeasurementEntity> getHistoryByOperation(String operation) {
-        return repository.findByOperation(operation);
+    public QuantityMeasurementEntity add(QuantityInputDTO input) {
+        QuantityDTO thisQty = input.getThisQuantityDTO();
+        QuantityDTO thatQty = input.getThatQuantityDTO();
+
+        IMeasurable thisUnit = getUnit(thisQty.getMeasurementType(), thisQty.getUnit());
+        IMeasurable thatUnit = getUnit(thatQty.getMeasurementType(), thatQty.getUnit());
+
+        thisUnit.validateOperationSupport("ADD");
+        thatUnit.validateOperationSupport("ADD");
+
+        double thisBase = thisUnit.toBaseUnit(thisQty.getValue());
+        double thatBase = thatUnit.toBaseUnit(thatQty.getValue());
+
+        double resultBase = thisBase + thatBase;
+        double resultValue = thisUnit.fromBaseUnit(resultBase);
+
+        QuantityMeasurementEntity entity = createBaseEntity(input, "ADD");
+        entity.setResultValue(resultValue);
+        entity.setResultUnit(thisQty.getUnit());
+        entity.setError(false);
+
+        return repository.save(entity);
+    }
+
+    @Override
+    public QuantityMeasurementEntity subtract(QuantityInputDTO input) {
+        QuantityDTO thisQty = input.getThisQuantityDTO();
+        QuantityDTO thatQty = input.getThatQuantityDTO();
+
+        IMeasurable thisUnit = getUnit(thisQty.getMeasurementType(), thisQty.getUnit());
+        IMeasurable thatUnit = getUnit(thatQty.getMeasurementType(), thatQty.getUnit());
+
+        thisUnit.validateOperationSupport("SUBTRACT");
+        thatUnit.validateOperationSupport("SUBTRACT");
+
+        double thisBase = thisUnit.toBaseUnit(thisQty.getValue());
+        double thatBase = thatUnit.toBaseUnit(thatQty.getValue());
+
+        double resultBase = thisBase - thatBase;
+        double resultValue = thisUnit.fromBaseUnit(resultBase);
+
+        QuantityMeasurementEntity entity = createBaseEntity(input, "SUBTRACT");
+        entity.setResultValue(resultValue);
+        entity.setResultUnit(thisQty.getUnit());
+        entity.setError(false);
+
+        return repository.save(entity);
+    }
+
+    @Override
+    public QuantityMeasurementEntity multiply(QuantityInputDTO input) {
+        QuantityDTO thisQty = input.getThisQuantityDTO();
+        QuantityDTO thatQty = input.getThatQuantityDTO();
+
+        IMeasurable thisUnit = getUnit(thisQty.getMeasurementType(), thisQty.getUnit());
+        IMeasurable thatUnit = getUnit(thatQty.getMeasurementType(), thatQty.getUnit());
+
+        thisUnit.validateOperationSupport("MULTIPLY");
+        thatUnit.validateOperationSupport("MULTIPLY");
+
+        double thisBase = thisUnit.toBaseUnit(thisQty.getValue());
+        double thatBase = thatUnit.toBaseUnit(thatQty.getValue());
+
+        double result = thisBase * thatBase;
+
+        QuantityMeasurementEntity entity = createBaseEntity(input, "MULTIPLY");
+        entity.setResultValue(result);
+        entity.setResultUnit("SQUARE_UNIT");
+        entity.setError(false);
+
+        return repository.save(entity);
+    }
+
+    @Override
+    public QuantityMeasurementEntity divide(QuantityInputDTO input) {
+        QuantityDTO thisQty = input.getThisQuantityDTO();
+        QuantityDTO thatQty = input.getThatQuantityDTO();
+
+        IMeasurable thisUnit = getUnit(thisQty.getMeasurementType(), thisQty.getUnit());
+        IMeasurable thatUnit = getUnit(thatQty.getMeasurementType(), thatQty.getUnit());
+
+        thisUnit.validateOperationSupport("DIVIDE");
+        thatUnit.validateOperationSupport("DIVIDE");
+
+        double thisBase = thisUnit.toBaseUnit(thisQty.getValue());
+        double thatBase = thatUnit.toBaseUnit(thatQty.getValue());
+
+        if (thatBase == 0) {
+            throw new ArithmeticException("Cannot divide by zero");
+        }
+
+        double result = thisBase / thatBase;
+
+        QuantityMeasurementEntity entity = createBaseEntity(input, "DIVIDE");
+        entity.setResultValue(result);
+        entity.setResultUnit("RATIO");
+        entity.setError(false);
+
+        return repository.save(entity);
     }
 
     @Override
@@ -247,10 +183,46 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     @Override
+    public List<QuantityMeasurementEntity> getHistoryByOperation(String operation) {
+        return repository.findByOperation(operation);
+    }
+
+    @Override
     public long getOperationCount(String operation) {
         return repository.countByOperationAndErrorFalse(operation);
     }
-    public void setRepository(QuantityMeasurementRepository repository) {
-        this.repository = repository;
+
+    private QuantityMeasurementEntity createBaseEntity(QuantityInputDTO input, String operation) {
+        QuantityDTO thisQty = input.getThisQuantityDTO();
+        QuantityDTO thatQty = input.getThatQuantityDTO();
+
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+        entity.setThisValue(thisQty.getValue());
+        entity.setThisUnit(thisQty.getUnit());
+        entity.setThisMeasurementType(thisQty.getMeasurementType());
+
+        entity.setThatValue(thatQty.getValue());
+        entity.setThatUnit(thatQty.getUnit());
+        entity.setThatMeasurementType(thatQty.getMeasurementType());
+
+        entity.setOperation(operation);
+        entity.setCreatedAt(LocalDateTime.now());
+        entity.setError(false);
+
+        return entity;
+    }
+
+    private IMeasurable getUnit(String measurementType, String unit) {
+        if (measurementType == null || unit == null) {
+            throw new IllegalArgumentException("Measurement type and unit must not be null");
+        }
+
+        return switch (measurementType.toUpperCase()) {
+            case "LENGTH" -> LengthUnit.valueOf(unit.toUpperCase());
+            case "WEIGHT" -> WeightUnit.valueOf(unit.toUpperCase());
+            case "VOLUME" -> VolumeUnit.valueOf(unit.toUpperCase());
+            case "TEMPERATURE" -> TemperatureUnit.valueOf(unit.toUpperCase());
+            default -> throw new IllegalArgumentException("Unsupported measurement type: " + measurementType);
+        };
     }
 }
