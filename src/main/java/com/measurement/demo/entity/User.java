@@ -1,6 +1,11 @@
 package com.measurement.demo.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
@@ -10,39 +15,37 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    private String provider;     // LOCAL / GOOGLE
+    private String providerId;   // Google unique id
+
     private String role;
 
-    @Column(nullable = false)
     private boolean enabled = true;
 
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, String role, boolean enabled) {
+    public User(Long id, String name, String email, String password, String provider,
+                String providerId, String role, boolean enabled) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.provider = provider;
+        this.providerId = providerId;
         this.role = role;
         this.enabled = enabled;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -67,6 +70,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
     }
 
     public String getRole() {

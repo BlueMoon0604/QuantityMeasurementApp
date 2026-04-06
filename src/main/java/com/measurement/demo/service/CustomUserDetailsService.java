@@ -24,13 +24,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         String role = user.getRole();
 
-        if (!role.startsWith("ROLE_")) {
+        if (role == null || role.isBlank()) {
+            role = "ROLE_USER";
+        } else if (!role.startsWith("ROLE_")) {
             role = "ROLE_" + role;
+        }
+
+        String password = user.getPassword();
+        if (password == null) {
+            password = "";
         }
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
-                user.getPassword(),
+                password,
                 user.isEnabled(),
                 true,
                 true,
