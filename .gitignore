@@ -59,8 +59,12 @@ build/
 ######################################
 .vscode/
 
+
 ######################################
 # OS FILES
 ######################################
 .DS_Store
 Thumbs.db
+
+src/main/resources/application-secrets.properties
+
