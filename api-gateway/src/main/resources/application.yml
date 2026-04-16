@@ -15,6 +15,13 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: oauth2-callback
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/login/oauth2/code/**
+          filters:
+            - StripPrefix=0
+
         - id: measurement-service
           uri: lb://MEASUREMENT-SERVICE
           predicates:

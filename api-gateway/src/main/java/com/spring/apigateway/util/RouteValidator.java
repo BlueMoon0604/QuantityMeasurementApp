@@ -9,12 +9,13 @@ public class RouteValidator {
     public boolean isSecured(ServerWebExchange exchange) {
         String path = exchange.getRequest().getURI().getPath();
 
-        if (path.startsWith("/api/auth/")
+        if (path.startsWith("/user/api/auth/")
+                || path.startsWith("/user/oauth2/")
+                || path.startsWith("/user/login/")
+                || path.startsWith("/login/oauth2/")  
+                || path.startsWith("/user/error")
                 || path.startsWith("/oauth2")
-                || path.startsWith("/login")
-                || path.startsWith("/api/v1/quantities/count/")
-                || path.startsWith("/api/v1/quantities/history/type/")
-                || path.startsWith("/api/v1/quantities/history/operation/")) {
+                || path.startsWith("/login")) {
             return false;
         }
 

@@ -9,6 +9,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -26,17 +28,15 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
         String email = oauthUser.getAttribute("email");
+        String name  = oauthUser.getAttribute("name");
 
         String token = jwtService.generateToken(email);
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("""
-                {
-                  "message": "Google login successful",
-                  "token": "%s",
-                  "email": "%s"
-                }
-                """.formatted(token, email));
+        String redirectUrl = "http://localhost:4200/oauth2/callback"
+                + "?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8)
+                + "&email=" + URLEncoder.encode(email != null ? email : "", StandardCharsets.UTF_8)
+                + "&name="  + URLEncoder.encode(name  != null ? name  : "", StandardCharsets.UTF_8);
+
+        response.sendRedirect(redirectUrl);
     }
 }
