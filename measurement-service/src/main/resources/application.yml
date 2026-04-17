@@ -1,7 +1,10 @@
 server:
-  port: ${PORT:8083}
+  port: ${PORT:8084}
 
 spring:
+  config:
+    import: optional:classpath:application-secrets.yml
+
   application:
     name: measurement-service
 
@@ -18,14 +21,13 @@ spring:
 
 eureka:
   client:
-    service-url:
-      defaultZone: https://eureka-server-vzyy.onrender.com/eureka/
     register-with-eureka: true
     fetch-registry: true
+    service-url:
+      defaultZone: https://eureka-server-vzyy.onrender.com/eureka/
   instance:
     prefer-ip-address: false
-    hostname: measurement-service.onrender.com
-    non-secure-port: ${PORT:8083}
+    non-secure-port: ${PORT:8084}
     instance-id: ${spring.application.name}:${random.value}
 
 management:
