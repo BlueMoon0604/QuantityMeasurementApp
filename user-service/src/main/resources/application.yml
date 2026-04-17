@@ -1,5 +1,5 @@
 server:
-  port:  ${PORT:8083}
+  port: ${PORT:8083}
 
 spring:
   config:
@@ -18,9 +18,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
 
   security:
     oauth2:
@@ -40,6 +37,11 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: https://eureka-server-vzyy.onrender.com/eureka/
+  instance:
+    prefer-ip-address: false
+    hostname: user-service-t0gn.onrender.com
+    non-secure-port: ${PORT:8083}
+    instance-id: ${spring.application.name}:${random.value}
 
 management:
   endpoints:
