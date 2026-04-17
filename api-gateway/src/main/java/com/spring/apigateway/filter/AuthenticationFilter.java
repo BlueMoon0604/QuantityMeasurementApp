@@ -4,6 +4,7 @@ import com.spring.apigateway.util.RouteValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
-public class AuthenticationFilter implements GlobalFilter {
+public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     @Autowired
     private RouteValidator routeValidator;
@@ -22,21 +23,31 @@ public class AuthenticationFilter implements GlobalFilter {
         String path = exchange.getRequest().getURI().getPath();
         System.out.println("Gateway path: " + path);
 
-        if (routeValidator.isSecured(exchange)) {
+        if (path.startsWith("/user/api/auth/")
+                || path.startsWith("/user/oauth2/")
+                || path.startsWith("/login/oauth2/")) {
+            return chain.filter(exchange);
+        }
 
-            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+        if (routeValidator.isSecured(exchange)) {
+            String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
+            if (authHeader == null || authHeader.isBlank()) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
-            String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (!authHeader.startsWith("Bearer ")) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
         }
 
         return chain.filter(exchange);
+    }
+
+    @Override
+    public int getOrder() {
+        return -1;
     }
 }

@@ -85,6 +85,8 @@ public class AuthController {
             response.put("authenticated", true);
             response.put("message", "Login successful");
             response.put("token", token);
+            response.put("email", user.getEmail());
+            response.put("name", user.getName());
 
             return ResponseEntity.ok(response);
 
