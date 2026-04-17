@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: ${PORT:8082}
 
 spring:
   config:
@@ -20,7 +20,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
 
   security:
     oauth2:
@@ -32,28 +32,11 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute: sub
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    try-it-out-enabled: true
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
-
-logging:
-  level:
-    org.springframework.security: DEBUG
+      defaultZone: ${EUREKA_URL}

@@ -1,14 +1,17 @@
 server:
-  port: 8083
+  port: ${PORT:8083}
 
 spring:
+  config:
+    import: optional:classpath:application-secrets.yml
+
   application:
     name: measurement-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/quantitydb?useSSL=false&serverTimezone=UTC
-    username: root
-    password: root123
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -26,5 +29,7 @@ springdoc:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL}
