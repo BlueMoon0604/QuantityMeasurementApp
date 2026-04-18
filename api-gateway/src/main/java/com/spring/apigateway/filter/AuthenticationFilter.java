@@ -23,12 +23,15 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getURI().getPath();
         System.out.println("Gateway path: " + path);
 
+        // ✅ PUBLIC ROUTES
         if (path.startsWith("/user/api/auth/")
                 || path.startsWith("/user/oauth2/")
-                || path.startsWith("/login/oauth2/")) {
+                || path.startsWith("/login/oauth2/")
+                || path.startsWith("/actuator")) {
             return chain.filter(exchange);
         }
 
+        // ✅ SECURED ROUTES
         if (routeValidator.isSecured(exchange)) {
             String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 

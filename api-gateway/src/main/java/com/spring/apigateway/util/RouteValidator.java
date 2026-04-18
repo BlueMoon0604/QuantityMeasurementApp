@@ -14,10 +14,10 @@ public class RouteValidator {
                 || path.startsWith("/user/oauth2/")
                 || path.startsWith("/user/login/")
                 || path.startsWith("/login/oauth2/")
-                || path.startsWith("/user/error")
                 || path.startsWith("/oauth2")
                 || path.startsWith("/login")
                 || path.startsWith("/eureka")
+                || path.startsWith("/actuator")   
         );
     }
 }
