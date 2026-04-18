@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth")    
 public class AuthController {
 
-    private final UserRepository userRepository;
+    private final UserRepository userRepository; 
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
